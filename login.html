@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — AstroPlan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .auth-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--paper);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 34px 32px;
+  }
+  .auth-brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 28px;
+    margin: 0 0 6px;
+  }
+  .auth-brand .brand { font-style: italic; color: var(--accent-dark); }
+  .auth-sub { font-size: 13.5px; color: var(--ink-faint); margin: 0 0 24px; }
+
+  .auth-tabs {
+    display: flex;
+    background: var(--paper-2);
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    padding: 4px;
+    margin-bottom: 22px;
+  }
+  .auth-tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .auth-tab.active { background: var(--dark); color: #fff; }
+
+  .auth-error {
+    display: none;
+    background: #fdf2f2;
+    border: 1px solid #f3c9c9;
+    color: #c73838;
+    font-size: 12.5px;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 9px 12px;
+    margin-top: 14px;
+  }
+  .auth-error.show { display: block; }
+
+  .auth-notice {
+    display: none;
+    background: #f0f7f0;
+    border: 1px solid #c9e3c9;
+    color: #2f7d3f;
+    font-size: 12.5px;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 9px 12px;
+    margin-top: 14px;
+  }
+  .auth-notice.show { display: block; }
+
+  .auth-foot { text-align: center; margin-top: 18px; font-size: 12px; color: var(--ink-faint); }
+
+  .password-wrap { position: relative; }
+  .password-wrap .field { padding-right: 42px; }
+  .password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: var(--ink-faint);
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .password-toggle:hover { color: var(--ink); background: var(--line-soft); }
+</style>
+</head>
+<body>
+
+<div class="bg-decor" aria-hidden="true"></div>
+
+<div class="auth-shell">
+  <div class="auth-card">
+    <p class="eyebrow">Personal Command Center</p>
+    <h1 class="auth-brand">Welcome to <span class="brand">AstroPlan</span></h1>
+    <p class="auth-sub">Sign in to reach your own tasks and assessments — no matter which device you're on.</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-mode="signin">Sign in</button>
+      <button class="auth-tab" data-mode="signup">Create account</button>
+    </div>
+
+    <form id="authForm">
+      <label class="field-label" for="emailInput">Email</label>
+      <input id="emailInput" class="field" type="email" placeholder="you@example.com" autocomplete="email" required>
+
+      <label class="field-label" for="passwordInput">Password</label>
+      <div class="password-wrap">
+        <input id="passwordInput" class="field" type="password" placeholder="••••••••" autocomplete="current-password" required minlength="6">
+        <button type="button" id="togglePassword" class="password-toggle" aria-label="Show password" aria-pressed="false">
+          <svg class="icon-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="icon-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a20.3 20.3 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a20.3 20.3 0 0 1-2.68 3.9M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
+
+      <button type="submit" id="authSubmit" class="btn btn-primary btn-block">Sign in</button>
+
+      <div class="auth-error" id="authError"></div>
+      <div class="auth-notice" id="authNotice"></div>
+    </form>
+
+    <p class="auth-foot">Each account only ever sees its own data.</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script>
+(() => {
+  'use strict';
+
+  const $ = (sel) => document.querySelector(sel);
+  let mode = 'signin';
+
+  const form = $('#authForm');
+  const submitBtn = $('#authSubmit');
+  const errorBox = $('#authError');
+  const noticeBox = $('#authNotice');
+
+  function setMode(next) {
+    mode = next;
+    $$tabs().forEach((t) => t.classList.toggle('active', t.dataset.mode === next));
+    submitBtn.textContent = next === 'signin' ? 'Sign in' : 'Create account';
+    $('#passwordInput').autocomplete = next === 'signin' ? 'current-password' : 'new-password';
+    hideMessages();
+  }
+
+  function $$tabs() {
+    return Array.from(document.querySelectorAll('.auth-tab'));
+  }
+
+  function hideMessages() {
+    errorBox.classList.remove('show');
+    noticeBox.classList.remove('show');
+  }
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.classList.add('show');
+    noticeBox.classList.remove('show');
+  }
+
+  function showNotice(msg) {
+    noticeBox.textContent = msg;
+    noticeBox.classList.add('show');
+    errorBox.classList.remove('show');
+  }
+
+  $$tabs().forEach((tab) => {
+    tab.addEventListener('click', () => setMode(tab.dataset.mode));
+  });
+
+  const passwordInput = $('#passwordInput');
+  const togglePasswordBtn = $('#togglePassword');
+  const eyeIcon = togglePasswordBtn.querySelector('.icon-eye');
+  const eyeOffIcon = togglePasswordBtn.querySelector('.icon-eye-off');
+
+  togglePasswordBtn.addEventListener('click', () => {
+    const showing = passwordInput.type === 'text';
+    passwordInput.type = showing ? 'password' : 'text';
+    eyeIcon.hidden = !showing;
+    eyeOffIcon.hidden = showing;
+    togglePasswordBtn.setAttribute('aria-pressed', String(!showing));
+    togglePasswordBtn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+    passwordInput.focus({ preventScroll: true });
+  });
+
+  // If already signed in, skip straight to the app.
+  window.sb.auth.getSession().then(({ data }) => {
+    if (data.session) window.location.replace('index.html');
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideMessages();
+    const email = $('#emailInput').value.trim();
+    const password = $('#passwordInput').value;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = mode === 'signin' ? 'Signing in…' : 'Creating account…';
+
+    try {
+      if (mode === 'signin') {
+        const { error } = await window.sb.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        window.location.replace('index.html');
+      } else {
+        const { data, error } = await window.sb.auth.signUp({ email, password });
+        if (error) throw error;
+        if (data.session) {
+          window.location.replace('index.html');
+        } else {
+          setMode('signin');
+          showNotice('Account created. Check your email to confirm, then sign in.');
+        }
+      }
+    } catch (err) {
+      showError(err.message || 'Something went wrong. Try again.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = mode === 'signin' ? 'Sign in' : 'Create account';
+    }
+  });
+})();
+</script>
+</body>
+</html>
