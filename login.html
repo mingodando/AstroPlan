@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sign in — AstroPlan</title>
+<meta name="theme-color" content="#f4ede3">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23241f1a'/%3E%3Cpath d='M16 6l2.6 7.4L26 16l-7.4 2.6L16 26l-2.6-7.4L6 16l7.4-2.6z' fill='%23e0714a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -124,7 +126,7 @@
       <button class="auth-tab" data-mode="signup">Create account</button>
     </div>
 
-    <form id="authForm">
+    <form id="authForm" novalidate>
       <label class="field-label" for="emailInput">Email</label>
       <input id="emailInput" class="field" type="email" placeholder="you@example.com" autocomplete="email" required>
 
@@ -209,16 +211,44 @@
     passwordInput.focus({ preventScroll: true });
   });
 
+  if (!window.sb) {
+    showError("Couldn't reach the AstroPlan servers. Check your internet connection and reload the page.");
+    submitBtn.disabled = true;
+    return;
+  }
+
   // If already signed in, skip straight to the app.
-  window.sb.auth.getSession().then(({ data }) => {
-    if (data.session) window.location.replace('index.html');
-  });
+  window.sb.auth.getSession()
+    .then(({ data }) => {
+      if (data && data.session) window.location.replace('index.html');
+    })
+    .catch((err) => console.error(err));
+
+  function friendlyError(err) {
+    const msg = (err && err.message) || '';
+    if (/invalid login credentials/i.test(msg)) return 'That email and password don’t match. Try again.';
+    if (/email not confirmed/i.test(msg)) return 'Confirm your email first — check your inbox for the link.';
+    if (/already registered/i.test(msg)) return 'An account with this email already exists. Sign in instead.';
+    if (/failed to fetch|network/i.test(msg)) return 'Couldn’t reach the server. Check your connection and try again.';
+    return msg || 'Something went wrong. Try again.';
+  }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideMessages();
     const email = $('#emailInput').value.trim();
     const password = $('#passwordInput').value;
+
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+      showError('Enter a valid email address.');
+      $('#emailInput').focus();
+      return;
+    }
+    if (password.length < 6) {
+      showError('Passwords are at least 6 characters.');
+      $('#passwordInput').focus();
+      return;
+    }
 
     submitBtn.disabled = true;
     submitBtn.textContent = mode === 'signin' ? 'Signing in…' : 'Creating account…';
@@ -239,7 +269,7 @@
         }
       }
     } catch (err) {
-      showError(err.message || 'Something went wrong. Try again.');
+      showError(friendlyError(err));
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = mode === 'signin' ? 'Sign in' : 'Create account';

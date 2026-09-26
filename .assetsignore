@@ -1,0 +1,11 @@
+.git
+.venv
+.idea
+.claude
+.wrangler
+node_modules
+*.py
+wrangler.jsonc
+README.md
+.assetsignore
+.gitignore

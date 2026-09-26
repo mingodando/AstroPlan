@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f4ede3">
 <title>AstroPlan — Personal Command Center</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23241f1a'/%3E%3Cpath d='M16 6l2.6 7.4L26 16l-7.4 2.6L16 26l-2.6-7.4L6 16l7.4-2.6z' fill='%23e0714a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -15,6 +17,14 @@
 
 <div class="bg-decor" aria-hidden="true"></div>
 
+<div class="boot" id="boot" aria-live="polite">
+  <div class="boot-card">
+    <div class="boot-spinner" aria-hidden="true"></div>
+    <p class="boot-text" id="bootText">Loading AstroPlan…</p>
+    <button class="btn btn-primary" id="bootRetry" hidden>Try again</button>
+  </div>
+</div>
+
 <div class="shell">
 
   <header class="hero">
@@ -24,17 +34,17 @@
       <p class="hero-sub">A focused place for the work that needs your attention. Give every task a color, a date, and a clear next step.</p>
     </div>
     <div class="hero-actions">
-      <button id="timerBtn" class="btn btn-accent">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 3h6"/></svg>
-        Study timer
+      <button id="timerBtn" class="btn btn-accent" type="button">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 3h6"/></svg>
+        <span id="timerBtnLabel">Study timer</span>
       </button>
-      <div id="openTasksChip" class="btn btn-dark">
-        <span id="openTasksCount">0</span> open tasks
-      </div>
+      <button id="openTasksChip" class="btn btn-dark" type="button" title="Show open tasks">
+        <span><span id="openTasksCount">0</span> <span id="openTasksWord">open tasks</span></span>
+      </button>
       <div class="user-chip">
         <span id="userEmail" class="user-email"></span>
-        <button id="signOutBtn" class="icon-btn" aria-label="Sign out" title="Sign out">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <button id="signOutBtn" class="icon-btn" type="button" aria-label="Sign out" title="Sign out">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
       </div>
     </div>
@@ -43,139 +53,185 @@
   <section class="panel week-panel">
     <div class="week-head">
       <div>
-        <h2>My assessments</h2>
+        <h2>My week</h2>
         <p class="week-range" id="weekRange">—</p>
       </div>
       <div class="week-nav">
-        <button id="prevWeek" class="icon-btn" aria-label="Previous week">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <button id="todayWeek" class="chip-btn" type="button" hidden>Today</button>
+        <button id="prevWeek" class="icon-btn" type="button" aria-label="Previous week">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
-        <button id="nextWeek" class="icon-btn" aria-label="Next week">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        <button id="nextWeek" class="icon-btn" type="button" aria-label="Next week">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
     </div>
     <div class="week-grid" id="weekGrid"></div>
-    <p class="week-hint">Click a day to see or add its assessments.</p>
+    <p class="week-hint">Click a day to see its assessments and tasks, or to add an assessment.</p>
   </section>
 
   <section class="main-grid">
-    <div class="panel form-panel">
+    <form class="panel form-panel task-form-panel" id="taskForm" novalidate>
       <h2>Add a task</h2>
-      <p class="panel-sub">Tasks are saved in this browser automatically.</p>
+      <p class="panel-sub">Saved to your account, so it follows you to any device.</p>
 
       <label class="field-label" for="taskInput">Task</label>
-      <input id="taskInput" class="field" type="text" placeholder="What needs doing?">
+      <input id="taskInput" class="field" type="text" placeholder="What needs doing?" maxlength="200" autocomplete="off">
 
       <label class="field-label" for="notesInput">Notes</label>
-      <textarea id="notesInput" class="field textarea" placeholder="Add useful context, links, or a next step..."></textarea>
+      <textarea id="notesInput" class="field textarea" placeholder="Add useful context, links, or a next step..." maxlength="2000"></textarea>
 
-      <label class="field-label" for="dueInput">Due date</label>
-      <input id="dueInput" class="field" type="date">
-
-      <label class="field-label" for="repeatInput">Repeat</label>
-      <select id="repeatInput" class="field">
-        <option value="none">Does not repeat</option>
-        <option value="daily">Daily</option>
-        <option value="weekly">Weekly</option>
-        <option value="monthly">Monthly</option>
-      </select>
-
-      <label class="field-label">Color code</label>
-      <div class="color-row" id="colorRow">
-        <button class="swatch active" data-color="orange" style="--sw:#e0714a" aria-label="Orange"></button>
-        <button class="swatch" data-color="blue" style="--sw:#5b8def" aria-label="Blue"></button>
-        <button class="swatch" data-color="green" style="--sw:#4caf7d" aria-label="Green"></button>
-        <button class="swatch" data-color="yellow" style="--sw:#e0b04a" aria-label="Yellow"></button>
-        <button class="swatch" data-color="purple" style="--sw:#9b6de0" aria-label="Purple"></button>
-        <button class="swatch" data-color="gray" style="--sw:#8a8f98" aria-label="Gray"></button>
+      <div class="field-pair">
+        <div>
+          <label class="field-label" for="dueInput">Due date</label>
+          <input id="dueInput" class="field" type="date">
+        </div>
+        <div>
+          <label class="field-label" for="repeatInput">Repeat</label>
+          <select id="repeatInput" class="field">
+            <option value="none">Never</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
       </div>
 
-      <button id="addTaskBtn" class="btn btn-primary btn-block">Add task</button>
-    </div>
+      <span class="field-label" id="colorLabel">Color code</span>
+      <div class="color-row" id="colorRow" role="radiogroup" aria-labelledby="colorLabel"></div>
 
-    <div class="panel form-panel assess-panel">
+      <button id="addTaskBtn" type="submit" class="btn btn-primary btn-block">Add task</button>
+    </form>
+
+    <form class="panel form-panel assess-panel" id="assessForm" novalidate>
       <h2>Add an assessment</h2>
-      <p class="panel-sub">Add an assessment to a day in your week.</p>
+      <p class="panel-sub">Tests, essays, presentations — anything on a date.</p>
 
       <label class="field-label" for="assessInput">Assessment</label>
-      <input id="assessInput" class="field" type="text" placeholder="What are you being assessed on?">
+      <input id="assessInput" class="field" type="text" placeholder="What are you being assessed on?" maxlength="200" autocomplete="off">
 
       <label class="field-label" for="assessDateInput">Assessment date</label>
       <input id="assessDateInput" class="field" type="date">
 
-      <button id="addAssessBtn" class="btn btn-primary btn-block">Add assessment</button>
+      <button id="addAssessBtn" type="submit" class="btn btn-primary btn-block">Add assessment</button>
 
       <div class="mini-divider"></div>
-      <p class="panel-sub small">Upcoming</p>
+      <p class="section-label">Upcoming</p>
       <div id="upcomingAssessments" class="upcoming-list"></div>
-    </div>
+    </form>
 
     <div class="panel tasks-panel">
       <div class="tasks-toolbar">
         <div class="search-wrap">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          <input id="searchInput" type="text" placeholder="Search tasks...">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input id="searchInput" type="search" placeholder="Search tasks..." aria-label="Search tasks" autocomplete="off">
         </div>
-        <button id="clearCompletedBtn" class="link-btn">Clear completed</button>
+        <button id="clearCompletedBtn" class="link-btn" type="button" disabled>Clear completed</button>
       </div>
 
-      <div class="filter-row" id="filterRow">
-        <button class="filter-chip active" data-filter="all">All</button>
-        <button class="filter-chip" data-filter="open">Open</button>
-        <button class="filter-chip" data-filter="today">Due today</button>
-        <button class="filter-chip" data-filter="overdue">Overdue</button>
-        <button class="filter-chip" data-filter="completed">Completed</button>
+      <div class="filter-row" id="filterRow" role="tablist" aria-label="Filter tasks">
+        <button class="filter-chip active" type="button" data-filter="all">All <span class="count"></span></button>
+        <button class="filter-chip" type="button" data-filter="open">Open <span class="count"></span></button>
+        <button class="filter-chip" type="button" data-filter="today">Due today <span class="count"></span></button>
+        <button class="filter-chip" type="button" data-filter="overdue">Overdue <span class="count"></span></button>
+        <button class="filter-chip" type="button" data-filter="completed">Completed <span class="count"></span></button>
       </div>
 
-      <div id="taskList" class="task-list">
-        <div class="empty-state" id="emptyState">
-          <div class="empty-icon">✦</div>
-          <p class="empty-title">Nothing here yet</p>
-          <p class="empty-sub">Add a task or switch the current filter.</p>
-        </div>
-      </div>
+      <div id="taskList" class="task-list" aria-live="polite"></div>
     </div>
   </section>
 
 </div>
 
 <div class="modal-overlay" id="dayOverlay">
-  <div class="modal day-modal">
-    <button class="modal-close" id="closeDay" aria-label="Close">&times;</button>
+  <div class="modal day-modal" role="dialog" aria-modal="true" aria-labelledby="dayModalDate">
+    <button class="modal-close" type="button" data-close aria-label="Close">&times;</button>
     <p class="eyebrow" id="dayModalWeekday">Day</p>
     <h2 class="day-modal-title" id="dayModalDate">—</h2>
 
     <div class="day-modal-section">
-      <p class="day-modal-label">Assessments</p>
+      <p class="section-label">Assessments</p>
       <div id="dayModalAssessments" class="day-modal-list"></div>
+      <form class="inline-add" id="dayAssessForm" novalidate>
+        <input id="dayAssessInput" class="field" type="text" placeholder="Add an assessment on this day" maxlength="200" autocomplete="off" aria-label="New assessment name">
+        <button class="btn btn-primary btn-sm" type="submit">Add</button>
+      </form>
     </div>
 
     <div class="day-modal-section">
-      <p class="day-modal-label">Tasks due</p>
+      <p class="section-label">Tasks due</p>
       <div id="dayModalTasks" class="day-modal-list"></div>
     </div>
   </div>
 </div>
 
+<div class="modal-overlay" id="editOverlay">
+  <form class="modal edit-modal" id="editForm" role="dialog" aria-modal="true" aria-labelledby="editTitle" novalidate>
+    <button class="modal-close" type="button" data-close aria-label="Close">&times;</button>
+    <p class="eyebrow">Edit task</p>
+    <h2 class="day-modal-title" id="editTitle">Update the details</h2>
+
+    <label class="field-label" for="editTaskInput">Task</label>
+    <input id="editTaskInput" class="field" type="text" maxlength="200" autocomplete="off">
+
+    <label class="field-label" for="editNotesInput">Notes</label>
+    <textarea id="editNotesInput" class="field textarea" maxlength="2000"></textarea>
+
+    <div class="field-pair">
+      <div>
+        <label class="field-label" for="editDueInput">Due date</label>
+        <input id="editDueInput" class="field" type="date">
+      </div>
+      <div>
+        <label class="field-label" for="editRepeatInput">Repeat</label>
+        <select id="editRepeatInput" class="field">
+          <option value="none">Never</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </div>
+    </div>
+
+    <span class="field-label" id="editColorLabel">Color code</span>
+    <div class="color-row" id="editColorRow" role="radiogroup" aria-labelledby="editColorLabel"></div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+      <button type="submit" class="btn btn-primary" id="editSaveBtn">Save changes</button>
+    </div>
+  </form>
+</div>
+
 <div class="modal-overlay" id="timerOverlay">
-  <div class="modal timer-modal">
-    <button class="modal-close" id="closeTimer" aria-label="Close">&times;</button>
-    <p class="eyebrow">Focus session</p>
-    <h2 class="timer-display" id="timerDisplay">25:00</h2>
+  <div class="modal timer-modal" role="dialog" aria-modal="true" aria-labelledby="timerHeading">
+    <button class="modal-close" type="button" data-close aria-label="Close">&times;</button>
+    <p class="eyebrow" id="timerHeading">Focus session</p>
+    <div class="timer-ring">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="ring-track" cx="100" cy="100" r="90"/>
+        <circle class="ring-progress" id="timerRing" cx="100" cy="100" r="90"/>
+      </svg>
+      <div class="timer-display" id="timerDisplay" role="timer" aria-live="off">25:00</div>
+    </div>
     <div class="timer-presets">
-      <button class="chip-btn" data-min="25">25 min</button>
-      <button class="chip-btn" data-min="45">45 min</button>
-      <button class="chip-btn" data-min="60">60 min</button>
+      <button class="chip-btn" type="button" data-min="15">15 min</button>
+      <button class="chip-btn" type="button" data-min="25">25 min</button>
+      <button class="chip-btn" type="button" data-min="45">45 min</button>
+      <button class="chip-btn" type="button" data-min="60">60 min</button>
     </div>
     <div class="timer-controls">
-      <button id="timerStartPause" class="btn btn-primary">Start</button>
-      <button id="timerReset" class="btn btn-ghost">Reset</button>
+      <button id="timerStartPause" type="button" class="btn btn-primary">Start</button>
+      <button id="timerReset" type="button" class="btn btn-ghost">Reset</button>
     </div>
+    <p class="timer-hint">The timer keeps running if you close this window.</p>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span id="toastMsg"></span>
+  <button type="button" class="toast-action" id="toastAction" hidden>Undo</button>
+</div>
 
 <script src="auth-guard.js"></script>
 <script src="app.js"></script>
